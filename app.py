@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import joblib
 import pandas as pd
 
 app = Flask(__name__)
+
+CORS(app, resources={r"/*": {"origins": "http://localhost:3011"}})
 
 # Load saved objects
 weather_model = joblib.load('weather_model_r.pkl')  # Model for weather prediction
@@ -17,6 +20,11 @@ X_final = joblib.load('X_final.pkl')
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
+
+@app.route('/test', methods=['POST'])
+def test():
+    data = request.json  # Get the JSON data sent to the endpoint
+    return jsonify(data), 200
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -116,4 +124,4 @@ def predict():
     return jsonify(response)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5011)
